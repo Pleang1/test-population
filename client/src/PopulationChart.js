@@ -15,7 +15,7 @@ function PopulationChart() {
 
   const handleData = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_KEY}/data`);
+      const response = await axios.get(`${process.env.REACT_APP_API_KEY}`);
       const temp_data = response.data.map((item, index) => ({
         id: index,
         title: item['Country name'],
