@@ -8,6 +8,10 @@ const port = 3001;
 
 app.use(cors());
 
+app.use('/', (req, res) => {
+  res.send('Server is running');
+});
+
 app.get('/data', (req, res) => {
   const data = [];
 
