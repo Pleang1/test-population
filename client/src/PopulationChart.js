@@ -7,6 +7,7 @@ import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
 function PopulationChart() {
+  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
   const [WorldData, setWorldData] = useState([]);
   const [chartData, setChartData] = useState([]);
@@ -16,21 +17,29 @@ function PopulationChart() {
   const handleData = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_KEY}`);
-      const temp_data = response.data.map((item, index) => ({
-        id: index,
-        title: item['Country name'],
-        value: item.Population,
-        year: Number(item.Year),
-      }))
-      // console.log(temp_data);
-      setData(temp_data);
-    } catch (error) {
-
+      if (response.data) {
+        const temp_data = response.data.map((item, index) => ({
+          id: index,
+          title: item['Country name'],
+          value: item.Population,
+          year: Number(item.Year),
+        }))
+        // console.log(temp_data);
+        setData(temp_data);
+        setIsLoading(false);
+      }
+    }
+    catch (error) {
+      console.error(error);
+      setIsLoading(false);
     }
   }
 
   useEffect(() => {
-    handleData();
+    setIsLoading(true);
+    setTimeout(() => {
+      handleData();
+    }, 500);
   }, [])
 
   useEffect(() => {
@@ -68,12 +77,14 @@ function PopulationChart() {
   return (
     <div style={{ padding: '2%' }}>
 
+      {isLoading === true && <div style={{ position: 'absolute', top: '48%', left: '49%' }} className="loader"></div>}
+
       <p style={{ textAlign: 'start', fontSize: '32px', fontWeight: 'bold' }}>
         Population growth per country, 1950 to 2021
       </p>
 
-      {isFetching === false && currentYear === 1950 &&
-        <button style={{ marginBottom: '40px', position: 'absolute', top: '50%', left: '50%' }} onClick={() => setIsFetching(true)}>Start</button>
+      {isFetching === false && currentYear === 1950 && isLoading === false &&
+        <button style={{ position: 'absolute', top: '50%', left: '50%' }} onClick={() => setIsFetching(true)}>Start</button>
       }
 
       {isFetching === false && currentYear > 2021 &&

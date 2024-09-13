@@ -28,10 +28,20 @@
   color: #61dafb;
 }
 
+.loader {
+  border: 10px solid #f3f3f3;
+  border-top: 10px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: App-logo-spin 1s linear infinite;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
