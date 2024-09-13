@@ -1,6 +1,7 @@
 const express = require('express');
-const fs = require('fs');
+const axios = require('axios');
 const csv = require('csv-parser');
+const { PassThrough } = require('stream');
 const cors = require('cors');
 
 const app = express();
@@ -8,25 +9,28 @@ const port = 3001;
 
 app.use(cors());
 
-app.use('/', (req, res) => {
-  res.send('Server is running');
-});
+app.use('/', async (req, res) => {
+  const csvUrl = 'https://raw.githubusercontent.com/Pleang1/population-csv/main/population-and-demography.csv';
 
-app.use('/data', (req, res) => {
-  const data = [];
+  try {
+    const response = await axios.get(csvUrl, { responseType: 'stream' });
+    const data = [];
 
-  fs.createReadStream('population-and-demography.csv')
-    .pipe(csv())
-    .on('data', (row) => {
-      data.push(row);
-    })
-    .on('end', () => {
-      res.json(data);
-    })
-    .on('error', (err) => {
-      console.error('Error reading CSV:', err);
-      res.status(500).json({ error: 'Error reading CSV file' });
-    });
+    response.data.pipe(csv())
+      .on('data', (row) => {
+        data.push(row);
+      })
+      .on('end', () => {
+        res.json(data);
+      })
+      .on('error', (err) => {
+        console.error('Error parsing CSV:', err);
+        res.status(500).json({ error: 'Error parsing CSV file' });
+      });
+  } catch (err) {
+    console.error('Error fetching CSV:', err);
+    res.status(500).json({ error: 'Error fetching CSV file' });
+  }
 });
 
 app.listen(port, () => {
