@@ -57,7 +57,7 @@ function PopulationChart() {
         if (currentYear > 2021) {
           setIsFetching(false);
         }
-      }, 100);
+      }, 200);
 
       return () => clearInterval(interval);
     }
