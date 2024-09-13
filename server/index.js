@@ -12,7 +12,7 @@ app.use('/', (req, res) => {
   res.send('Server is running');
 });
 
-app.get('/data', (req, res) => {
+app.use('/data', (req, res) => {
   const data = [];
 
   fs.createReadStream('population-and-demography.csv')
